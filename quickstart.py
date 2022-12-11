@@ -4,17 +4,32 @@ from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 
+# Output is like as follows
+# Shape of X [N, C, H, W]: torch.Size([64, 1, 28, 28])
+# dtype of X: torch.float32
+# Shape of y: torch.Size([64]) torch.int64
+def show_dataloader(dataloader):
+    for X, y in dataloader:
+        print(f"Shape of X [N, C, H, W]: {X.shape}")
+        print(f"dtype of X: {X.dtype}")
+        print(f"Shape of y: {y.shape} {y.dtype}")
+        break
+
 # Define model
 class NeuralNetwork(nn.Module):
-    def __init__(self):
+    def __init__(self, in_features):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28*28, 512),
+            # RuntimeError: mat1 and mat2 shapes cannot be multiplied (64x2764800 and 2768640x512)
+            # nn.Linear(28*28, 512),
+
+            nn.Linear(in_features, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
-            nn.Linear(512, 10)
+            # IndexError: Target 145 is out of bounds.
+            nn.Linear(512, 150)
         )
 
     def forward(self, x):
@@ -62,7 +77,7 @@ def main():
     # Get cpu or gpu device for training.
     device = "cuda" if torch.cuda.is_available() else "cpu"
     # print(f"Using {device} device")
-    model = NeuralNetwork().to(device)
+    model = NeuralNetwork(28*28).to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
@@ -89,10 +104,8 @@ def main():
     train_dataloader = DataLoader(training_data, batch_size=batch_size)
     test_dataloader = DataLoader(test_data, batch_size=batch_size)
 
-    for X, y in test_dataloader:
-        print(f"Shape of X [N, C, H, W]: {X.shape}")
-        print(f"Shape of y: {y.shape} {y.dtype}")
-        break
+
+    show_dataloader(test_dataloader)
 
 
     epochs = 5

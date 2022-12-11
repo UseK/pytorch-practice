@@ -14,6 +14,8 @@ for i in range(1, 894+1):
         # print(f"{i} remain time change!")
         remain -= datetime.timedelta(seconds=1)
     image_path = f"{str(i).zfill(6)}.jpg"
-    label = "finish" if i >= time_to_finish else remain
+    # label = "finish" if i >= time_to_finish else remain #=> AttributeError: 'tuple' object has no attribute 'to'
+
+    label = 0 if i >= time_to_finish else remain.seconds
     print(f"{image_path},{label}")
 
