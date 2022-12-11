@@ -50,7 +50,7 @@ def show_sample(data_to_show):
     plt.show()
 
 
-show_sample(training_data)
+# show_sample(training_data)
 
 
 class CustomImageDataset(Dataset):
@@ -67,6 +67,7 @@ class CustomImageDataset(Dataset):
         img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
         image = read_image(img_path)
         label = self.img_labels.iloc[idx, 1]
+        # print(f"'{label}'")
         if self.transform:
             image = self.transform(image)
         if self.target_transform:
