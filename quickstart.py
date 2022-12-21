@@ -17,7 +17,7 @@ def show_dataloader(dataloader):
 
 # Define model
 class NeuralNetwork(nn.Module):
-    def __init__(self, in_features):
+    def __init__(self, in_features, out_features=150):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
@@ -29,7 +29,7 @@ class NeuralNetwork(nn.Module):
             nn.Linear(512, 512),
             nn.ReLU(),
             # IndexError: Target 145 is out of bounds.
-            nn.Linear(512, 150)
+            nn.Linear(512, out_features)
         )
 
     def forward(self, x):
@@ -46,6 +46,7 @@ def train(dataloader, model, loss_fn, optimizer, device):
         X, y = X.to(device), y.to(device)
 
         # Compute prediction error
+        # print(f"X.shape: {X.shape}")
         pred = model(X)
         loss = loss_fn(pred, y)
 
@@ -115,11 +116,11 @@ def main():
         test(test_dataloader, model, loss_fn, device)
     print("Done!")
 
-    torch.save(model.state_dict(), "model.pth")
-    print("Saved PyTorch Model State to model.pth")
+    # torch.save(model.state_dict(), "model.pth")
+    # print("Saved PyTorch Model State to model.pth")
 
-    model = NeuralNetwork()
-    model.load_state_dict(torch.load("model.pth"))
+    # model = NeuralNetwork()
+    # model.load_state_dict(torch.load("model.pth"))
 
     classes = [
         "T-shirt/top",
@@ -137,6 +138,7 @@ def main():
     model.eval()
     x, y = test_data[0][0], test_data[0][1]
     with torch.no_grad():
+        print(f"x.shape: {x.shape}")
         pred = model(x)
         predicted, actual = classes[pred[0].argmax(0)], classes[y]
         print(f'Predicted: "{predicted}", Actual: "{actual}"')
