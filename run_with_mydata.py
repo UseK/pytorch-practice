@@ -8,7 +8,7 @@ from torchvision.transforms import ToTensor, Lambda
 from quickstart import NeuralNetwork, train, test, show_dataloader
 from datasets_dataloaders import CustomImageDataset
 
-device = "cpu"
+device = "cuda" if torch.cuda.is_available() else "cpu"
 #model = NeuralNetwork(1280*720*3).to(device)
 img_size = 512
 img_channel = 3
@@ -53,7 +53,7 @@ for i in range(280,300):
         # print("------")
         # print(f"i: {i}")
         # print(f"x.shape: {x.shape}")
-        x_as_one = x.unsqueeze(dim=0)
+        x_as_one = x.unsqueeze(dim=0).to(device)
         # print(f"x_as_one.shape: {x_as_one.shape}")
         # print(y)
         pred = model(x_as_one)
