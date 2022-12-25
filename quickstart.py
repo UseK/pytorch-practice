@@ -37,6 +37,49 @@ class NeuralNetwork(nn.Module):
         logits = self.linear_relu_stack(x)
         return logits
 
+class CNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        mid_channel = 8
+        self.convlayer1 = nn.Sequential(
+            nn.Conv2d(3, mid_channel, 3, padding=1),
+            nn.BatchNorm2d(mid_channel),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+        mid_channel2 = 1
+        self.convlayer2 = nn.Sequential(
+            nn.Conv2d(mid_channel, mid_channel2, 3, padding=1),
+            nn.BatchNorm2d(mid_channel2),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.mid_shape = mid_channel2 * 128 * 128
+
+        self.fc1 = nn.Linear(self.mid_shape, 600)
+        self.drop = nn.Dropout2d(0.25)
+        self.fc2 = nn.Linear(600, 120)
+        self.fc3 = nn.Linear(120, 2)
+
+    def forward(self, x):
+        # print(x.shape)
+        x = self.convlayer1(x)
+        # print(x.shape)
+        x = self.convlayer2(x)
+        # print(x.shape)
+        # x = x.view(-1, self.mid_shape)
+        x = nn.Flatten()(x)
+        # print(x.shape)
+        x = self.fc1(x)
+        # print(x.shape)
+        x = self.drop(x)
+        # print(x.shape)
+        x = self.fc2(x)
+        # print(x.shape)
+        x = self.fc3(x)
+        # print(x.shape)
+        return torch.nn.functional.log_softmax(x,dim=1)
+
 def train(dataloader, model, loss_fn, optimizer, device):
     size = len(dataloader.dataset)
     model.train()
