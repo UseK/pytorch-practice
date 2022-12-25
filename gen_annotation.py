@@ -21,6 +21,7 @@ def gen_annotation_time():
         label = 0 if i >= time_to_finish else remain.seconds
         print(f"{image_path},{label}")
 
+
 def gen_annotation_0_1():
     for i in range(1, 894+1):
         image_path = f"{str(i).zfill(6)}.jpg"
@@ -28,4 +29,19 @@ def gen_annotation_0_1():
         print(f"{image_path},{label}")
 
 # gen_annotation_time()
-gen_annotation_0_1()
+# gen_annotation_0_1()
+
+
+ranges = [
+    (range(1, 3790+1), 0),
+    (range(3790+1, 22418+1), 1),
+    (range(22418+1, 30705+1), 0),
+    (range(30705+1, 43719+1), 1),
+    (range(43719+1, 46379+1), 0),
+]
+
+for (r, is_buttle) in ranges:
+    for i in r:
+        image_path = f"{str(i).zfill(6)}.jpg"
+        print(f"{image_path},{is_buttle}")
+
